@@ -1,6 +1,31 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
 
+// License functions
+function renderLicenseBadge(license) {
+  if (license) {
+      return `[![License](https://img.shields.io/badge/License-${license}-brightgreen.svg)](https://opensource.org/licenses/${license})`;
+  } else {
+      return '';
+  }
+}
+
+function renderLicenseLink(license) {
+  if (license) {
+      return `[License](https://opensource.org/licenses/${license})`;
+  } else {
+      return '';
+  }
+}
+
+function renderLicenseSection(license) {
+  if (license) {
+      return `## License\n\nThis project is licensed under the ${license} license. Click [here](${renderLicenseLink(license)}) for more information.`;
+  } else {
+      return '';
+  }
+}
+
 const questions = [
     { type: 'input', name: 'Project-title', message: 'What is your project\'s name?' },
     { type: 'input', name: 'Motivation', message: 'What was your motivation for this project?' },
@@ -57,6 +82,20 @@ ${answers['License']}
         });
 }
 
+function init() {
+  inquirer.prompt(questions)
+      .then((answers) => {
+          const licenseBadge = renderLicenseBadge(answers['License']);
+          const licenseSection = renderLicenseSection(answers['License']);
+
+          const readmeContent = `# ${answers['Project-title']}\n\n## Motivation\n${answers['Motivation']}\n\n## Reason\n${answers['Reason']}\n\n## Problem-solving\n${answers['Problem-solving']}\n\n## Learned\n${answers['Learned']}\n\n## Installation Guide\n${answers['Installation-guide']}\n\n## Collaborators\n${answers['Collaborators']}\n\n${licenseSection}\n\n${licenseBadge}`;
+
+          writeToFile('README.md', readmeContent);
+      })
+      .catch((error) => {
+          console.error(error);
+      });
+}
 // Function call to initialize app
 function startApp() {
     init();
